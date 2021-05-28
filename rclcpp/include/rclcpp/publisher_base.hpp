@@ -30,6 +30,7 @@
 
 #include "rcl/publisher.h"
 
+#include "rclcpp/detail/enum_hash.hpp"
 #include "rclcpp/macros.hpp"
 #include "rclcpp/network_flow_endpoint.hpp"
 #include "rclcpp/qos.hpp"
@@ -117,7 +118,7 @@ public:
   /** \return The map of QoS event handlers. */
   RCLCPP_PUBLIC
   const
-  std::unordered_map<rcl_publisher_event_type_t, std::shared_ptr<rclcpp::QOSEventHandlerBase>> &
+  std::unordered_map<rcl_publisher_event_type_t, std::shared_ptr<rclcpp::QOSEventHandlerBase>, detail::EnumClassHash> &
   get_event_handlers() const;
 
   /// Get subscription count
@@ -337,7 +338,7 @@ protected:
   std::shared_ptr<rcl_publisher_t> publisher_handle_;
 
   std::unordered_map<rcl_publisher_event_type_t,
-    std::shared_ptr<rclcpp::QOSEventHandlerBase>> event_handlers_;
+    std::shared_ptr<rclcpp::QOSEventHandlerBase>, detail::EnumClassHash> event_handlers_;
 
   using IntraProcessManagerWeakPtr =
     std::weak_ptr<rclcpp::experimental::IntraProcessManager>;
