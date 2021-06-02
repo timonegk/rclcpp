@@ -26,6 +26,7 @@
 #include "rcl/types.h"
 
 #include "rclcpp/any_subscription_callback.hpp"
+#include "rclcpp/client.hpp"
 #include "rclcpp/context.hpp"
 #include "rclcpp/experimental/buffers/intra_process_buffer.hpp"
 #include "rclcpp/experimental/subscription_intra_process_buffer.hpp"
