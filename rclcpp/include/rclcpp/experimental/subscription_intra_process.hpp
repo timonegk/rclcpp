@@ -110,9 +110,16 @@ public:
 
     if (any_callback_.use_take_shared_method()) {
       shared_msg = this->buffer_->consume_shared();
+      if (!shared_msg) {
+        return nullptr;
+      }
     } else {
       unique_msg = this->buffer_->consume_unique();
+      if (!unique_msg) {
+        return nullptr;
+      }
     }
+
     return std::static_pointer_cast<void>(
       std::make_shared<std::pair<ConstMessageSharedPtr, MessageUniquePtr>>(
         std::pair<ConstMessageSharedPtr, MessageUniquePtr>(
@@ -139,7 +146,8 @@ protected:
   execute_impl(std::shared_ptr<void> & data)
   {
     if (!data) {
-      throw std::runtime_error("'data' is empty");
+      RCLCPP_WARN(rclcpp::get_logger("rclcpp"), "'data' is empty");
+      return;
     }
 
     rmw_message_info_t msg_info;
