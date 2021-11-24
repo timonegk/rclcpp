@@ -106,8 +106,12 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
     });
 
   if (this_clock_type == RCL_STEADY_TIME) {
-    auto steady_time = std::chrono::steady_clock::time_point(
-      std::chrono::nanoseconds(until.nanoseconds()));
+    // Synchronize because RCL steady clock epoch might differ from chrono::steady_clock epoch
+    const Time rcl_entry = now();
+    const std::chrono::steady_clock::time_point chrono_entry = std::chrono::steady_clock::now();
+    const Duration delta_t = until - rcl_entry;
+    const std::chrono::steady_clock::time_point chrono_until =
+      chrono_entry + std::chrono::nanoseconds(delta_t.nanoseconds());
 
     // XXX vvv
 #ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
@@ -119,7 +123,7 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
 
     typedef std::chrono::steady_clock _Clock;
     typedef std::chrono::system_clock __clock_t;
-    const auto __atime = steady_time;
+    const auto __atime = chrono_until;
 
 	  const typename _Clock::time_point __c_entry = _Clock::now();
 	  const __clock_t::time_point __s_entry = __clock_t::now();
@@ -135,7 +139,7 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
     // loop over spurious wakeups but notice shutdown
     std::unique_lock lock(impl_->clock_mutex_);
     while (now() < until && context->is_valid()) {
-      cv.wait_until(lock, steady_time);
+      cv.wait_until(lock, chrono_until);
     }
   } else if (this_clock_type == RCL_SYSTEM_TIME) {
     auto system_time = std::chrono::system_clock::time_point(
