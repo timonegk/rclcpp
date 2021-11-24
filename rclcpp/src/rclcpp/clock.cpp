@@ -106,14 +106,31 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
     });
 
   if (this_clock_type == RCL_STEADY_TIME) {
+    auto steady_time = std::chrono::steady_clock::time_point(
+      std::chrono::nanoseconds(until.nanoseconds()));
+
+    // XXX vvv
 #ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
     std::cerr << "_GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT is defined\n";
 #else
     std::cerr << "_GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT is not defined\n";
 #endif
     std::cerr << "Using GCC version "  << __GNUC__ << "."  << __GNUC_MINOR__ << "."  << __GNUC_PATCHLEVEL__  << "\n";
-    auto steady_time = std::chrono::steady_clock::time_point(
-      std::chrono::nanoseconds(until.nanoseconds()));
+
+    typedef std::chrono::steady_clock _Clock;
+    typedef std::chrono::system_clock __clock_t;
+    const auto __atime = steady_time;
+
+	  const typename _Clock::time_point __c_entry = _Clock::now();
+	  const __clock_t::time_point __s_entry = __clock_t::now();
+	  const auto __delta = __atime - __c_entry;
+	  const auto __s_atime = __s_entry + __delta;
+    std::cerr << "__atime: " << __atime.time_since_epoch().count() << "\n";
+    std::cerr << "__c_entry: " << __c_entry.time_since_epoch().count() << "\n";
+    std::cerr << "__s_entry: " << __s_entry.time_since_epoch().count() << "\n";
+    std::cerr << "__delta: " << __delta.count() << "\n";
+    std::cerr << "__s_atime: " << __s_atime.time_since_epoch().count() << "\n";
+    // XXX ^^^
 
     // loop over spurious wakeups but notice shutdown
     std::unique_lock lock(impl_->clock_mutex_);
