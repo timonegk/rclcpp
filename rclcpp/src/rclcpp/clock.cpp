@@ -15,6 +15,7 @@
 #include "rclcpp/clock.hpp"
 
 #include <condition_variable>
+#include <iostream>
 #include <memory>
 #include <thread>
 
@@ -105,6 +106,12 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
     });
 
   if (this_clock_type == RCL_STEADY_TIME) {
+#ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
+    std::cerr << "_GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT is defined\n";
+#else
+    std::cerr << "_GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT is not defined\n";
+#endif
+    std::cerr << "Using GCC version "  << __GNUC__ << "."  << __GNUC_MINOR__ << "."  << __GNUC_PATCHLEVEL__  << "\n";
     auto steady_time = std::chrono::steady_clock::time_point(
       std::chrono::nanoseconds(until.nanoseconds()));
 
