@@ -119,7 +119,23 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
 #else
     std::cerr << "_GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT is not defined\n";
 #endif
+
+
+#ifdef _GLIBCXX_USE_CLOCK_MONOTONIC
+    std::cerr << "_GLIBCXX_USE_CLOCK_MONOTONIC is defined\n";
+#else
+    std::cerr << "_GLIBCXX_USE_CLOCK_MONOTONIC is not defined\n";
+#endif
+
+
+#ifdef _GLIBCXX_USE_CLOCK_GETTIME_SYSCALL
+    std::cerr << "_GLIBCXX_USE_CLOCK_GETTIME_SYSCALL is defined\n";
+#else
+    std::cerr << "_GLIBCXX_USE_CLOCK_GETTIME_SYSCALL is not defined\n";
+#endif
+
     std::cerr << "Using GCC version "  << __GNUC__ << "."  << __GNUC_MINOR__ << "."  << __GNUC_PATCHLEVEL__  << "\n";
+
 
     typedef std::chrono::steady_clock _Clock;
     typedef std::chrono::system_clock __clock_t;
