@@ -134,6 +134,12 @@ Clock::sleep_until(Time until, Context::SharedPtr context)
     std::cerr << "_GLIBCXX_USE_CLOCK_GETTIME_SYSCALL is not defined\n";
 #endif
 
+#ifdef CLOCK_MONOTONIC_RAW
+    std::cerr << "CLOCK_MONOTONIC_RAW is defined\n";
+#else
+    std::cerr << "CLOCK_MONOTONIC_RAW is not defined\n";
+#endif
+
     std::cerr << "Using GCC version "  << __GNUC__ << "."  << __GNUC_MINOR__ << "."  << __GNUC_PATCHLEVEL__  << "\n";
 
 
