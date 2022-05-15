@@ -142,6 +142,7 @@ bool TimersManager::execute_head_timer()
   const bool timer_ready = head_timer->is_ready();
   if (timer_ready) {
     // Invoke the timer callback
+    head_timer->call();
     head_timer->execute_callback();
     timers_heap.heapify_root();
     weak_timers_heap_.store(timers_heap);
@@ -195,6 +196,7 @@ void TimersManager::execute_ready_timers_unsafe()
   size_t executed_timers = 0;
   while (executed_timers < number_ready_timers && head_timer->is_ready()) {
     // Execute head timer
+    head_timer->call();
     head_timer->execute_callback();
     executed_timers++;
     // Executing a timer will result in updating its time_until_trigger, so re-heapify

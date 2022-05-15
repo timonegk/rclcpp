@@ -43,7 +43,7 @@ EventsExecutor::EventsExecutor(
   entities_collector_ = std::make_shared<EventsExecutorEntitiesCollector>(this);
   entities_collector_->init();
 
-  // Setup the executor notifier to wake up the executor when some guard conditions are tiggered.
+  // Set up the executor notifier to wake up the executor when some guard conditions are triggered.
   // The added guard conditions are guaranteed to not go out of scope before the executor itself.
   executor_notifier_ = std::make_shared<EventsExecutorNotifyWaitable>();
   executor_notifier_->add_guard_condition(shutdown_guard_condition_.get());
